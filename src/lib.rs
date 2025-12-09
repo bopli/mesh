@@ -9,56 +9,21 @@ use gpui_component::{
     h_flex, v_flex,
 };
 use serde::{Deserialize, Serialize};
-// use tracing_subscriber::{layer::SubscriberExt as _, util::SubscriberInitExt as _};
 
 mod app_menus;
-// mod stories;
 mod themes;
 mod title_bar;
+
 pub use crate::title_bar::MeshTitleBar;
-// pub use stories::*;
 
-// #[derive(Action, Clone, PartialEq, Eq, Deserialize)]
-// #[action(namespace = mesh, no_json)]
-// pub struct SelectScrollbarShow(ScrollbarShow);
-
-// #[derive(Action, Clone, PartialEq, Eq, Deserialize)]
-// #[action(namespace = mesh, no_json)]
-// pub struct SelectLocale(SharedString);
-
-// #[derive(Action, Clone, PartialEq, Eq, Deserialize)]
-// #[action(namespace = mesh, no_json)]
-// pub struct SelectFont(usize);
-
-// #[derive(Action, Clone, PartialEq, Eq, Deserialize)]
-// #[action(namespace = mesh, no_json)]
-// pub struct SelectRadius(usize);
-
-actions!(
-    mesh,
-    [
-        About,
-        Open,
-        Quit,
-        CloseWindow,
-        ToggleSearch,
-        // TestAction,
-        // Tab,
-        // TabPrev,
-        // ShowPanelInfo
-    ]
-);
-
-// const PANEL_NAME: &str = "StoryContainer";
+actions!(mesh, [About, Open, Quit, CloseWindow, ToggleSearch,]);
 
 pub struct AppState {
     // pub invisible_panels: Entity<Vec<SharedString>>,
 }
 impl AppState {
     fn init(cx: &mut App) {
-        let state = Self {
-            // invisible_panels: cx.new(|_| Vec::new()),
-        };
+        let state = Self {};
         cx.set_global::<AppState>(state);
     }
 
@@ -168,15 +133,10 @@ impl Render for StoryRoot {
 }
 
 pub fn init(cx: &mut App) {
-    // tracing_subscriber::registry()
-    //     .with(tracing_subscriber::fmt::layer())
-    //     .with(
-    //         tracing_subscriber::EnvFilter::from_default_env()
-    //             .add_directive("gpui_component=trace".parse().unwrap()),
-    //     )
-    //     .init();
     env_logger::init_from_env(
-        env_logger::Env::new().filter("MESH_LOG"), // .write_style("MY_LOG_STYLE"),
+        env_logger::Env::new()
+            .filter("MESH_LOG")
+            .write_style("MY_LOG_STYLE"),
     );
 
     gpui_component::init(cx);
