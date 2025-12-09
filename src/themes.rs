@@ -12,6 +12,17 @@ const THEME_LIGHT: &str = "Ayu Light";
 struct State {
     theme: SharedString,
 }
+impl State {
+    fn apply_theme(cx: &mut App, theme_name: &SharedString) {
+        if let Some(theme) = ThemeRegistry::global(cx)
+            .themes()
+            .get(&SharedString::from(theme_name))
+            .cloned()
+        {
+            Theme::global_mut(cx).apply_config(&theme);
+        }
+    }
+}
 
 impl Default for State {
     fn default() -> Self {
@@ -27,42 +38,17 @@ pub fn init(cx: &mut App) {
     log::info!("Load themes...");
     let state = serde_json::from_str::<State>(&json).unwrap_or_default();
     if let Err(err) = ThemeRegistry::watch_dir(PathBuf::from("./themes"), cx, move |cx| {
-        let themes = ThemeRegistry::global(cx).themes();
-
-        if let Some(theme) = themes.get(&state.theme).cloned() {
-            Theme::global_mut(cx).apply_config(&theme);
-        }
+        let theme_dark = SharedString::from(THEME_DARK);
+        let theme_light = SharedString::from(THEME_LIGHT);
 
         if &state.theme == THEME_LIGHT {
-            if let Some(theme) = ThemeRegistry::global(cx)
-                .themes()
-                .get(&SharedString::from(THEME_DARK))
-                .cloned()
-            {
-                Theme::global_mut(cx).apply_config(&theme);
-            }
-            if let Some(theme) = ThemeRegistry::global(cx)
-                .themes()
-                .get(&SharedString::from(THEME_LIGHT))
-                .cloned()
-            {
-                Theme::global_mut(cx).apply_config(&theme);
-            }
+            State::apply_theme(cx, &theme_dark);
+            State::apply_theme(cx, &theme_light);
+        } else if &state.theme == THEME_LIGHT {
+            State::apply_theme(cx, &theme_light);
+            State::apply_theme(cx, &theme_dark);
         } else {
-            if let Some(theme) = ThemeRegistry::global(cx)
-                .themes()
-                .get(&SharedString::from(THEME_LIGHT))
-                .cloned()
-            {
-                Theme::global_mut(cx).apply_config(&theme);
-            }
-            if let Some(theme) = ThemeRegistry::global(cx)
-                .themes()
-                .get(&SharedString::from(THEME_DARK))
-                .cloned()
-            {
-                Theme::global_mut(cx).apply_config(&theme);
-            }
+            log::warn!("No themes Found");
         }
     }) {
         log::error!("Failed to watch themes directory: {}", err);
