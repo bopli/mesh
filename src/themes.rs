@@ -44,7 +44,7 @@ pub fn init(cx: &mut App) {
         if &state.theme == THEME_LIGHT {
             State::apply_theme(cx, &theme_dark);
             State::apply_theme(cx, &theme_light);
-        } else if &state.theme == THEME_LIGHT {
+        } else if &state.theme == THEME_DARK {
             State::apply_theme(cx, &theme_light);
             State::apply_theme(cx, &theme_dark);
         } else {

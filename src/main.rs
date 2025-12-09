@@ -8,7 +8,7 @@ use gpui_component::{
 use gpui_component_assets::Assets;
 // use gpui_component_story::*;
 
-pub struct Gallery {
+pub struct Mesh {
     // stories: Vec<(&'static str, Vec<Entity<StoryContainer>>)>,
     active_group_index: Option<usize>,
     active_index: Option<usize>,
@@ -17,7 +17,7 @@ pub struct Gallery {
     _subscriptions: Vec<Subscription>,
 }
 
-impl Gallery {
+impl Mesh {
     pub fn new(init_story: Option<&str>, window: &mut Window, cx: &mut Context<Self>) -> Self {
         let search_input = cx.new(|cx| InputState::new(window, cx).placeholder("Search..."));
         let _subscriptions = vec![cx.subscribe(&search_input, |this, _, e, cx| match e {
@@ -57,7 +57,7 @@ impl Gallery {
     }
 }
 
-impl Render for Gallery {
+impl Render for Mesh {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         // let query = self.search_input.read(cx).value().trim().to_lowercase();
 
@@ -114,7 +114,7 @@ fn main() {
         mesh::create_new_window(
             "Mesh",
             None,
-            move |window, cx| Gallery::view(name.as_deref(), window, cx),
+            move |window, cx| Mesh::view(name.as_deref(), window, cx),
             cx,
         );
     });

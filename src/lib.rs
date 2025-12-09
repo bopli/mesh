@@ -1,14 +1,9 @@
 use gpui::{
-    AnyElement, AnyView, App, AppContext, Bounds, Context, Div, Entity, Global, IntoElement,
-    KeyBinding, ParentElement, Pixels, Render, RenderOnce, SharedString, Size, StyleRefinement,
-    Styled, Window, WindowBounds, WindowKind, WindowOptions, actions, div, px, rems, size,
+    AnyView, App, AppContext, Bounds, Context, Entity, Global, IntoElement, KeyBinding,
+    ParentElement, Pixels, Render, SharedString, Size, Styled, Window, WindowBounds, WindowKind,
+    WindowOptions, actions, div, px, size,
 };
-use gpui_component::{
-    ActiveTheme, Root, TitleBar,
-    group_box::{GroupBox, GroupBoxVariants as _},
-    h_flex, v_flex,
-};
-use serde::{Deserialize, Serialize};
+use gpui_component::{Root, TitleBar, v_flex};
 
 mod app_menus;
 mod themes;
@@ -64,10 +59,6 @@ pub fn create_new_window<F, E>(
                 height: px(320.),
             }),
             kind: WindowKind::Normal,
-            #[cfg(target_os = "linux")]
-            window_background: gpui::WindowBackgroundAppearance::Transparent,
-            #[cfg(target_os = "linux")]
-            window_decorations: Some(gpui::WindowDecorations::Client),
             ..Default::default()
         };
 
@@ -133,11 +124,7 @@ impl Render for StoryRoot {
 }
 
 pub fn init(cx: &mut App) {
-    env_logger::init_from_env(
-        env_logger::Env::new()
-            .filter("MESH_LOG")
-            .write_style("MY_LOG_STYLE"),
-    );
+    env_logger::init_from_env(env_logger::Env::new().filter("MESH_LOG"));
 
     gpui_component::init(cx);
     AppState::init(cx);
@@ -197,82 +184,77 @@ pub fn init(cx: &mut App) {
     cx.activate(true);
 }
 
-#[derive(IntoElement)]
-struct StorySection {
-    base: Div,
-    title: SharedString,
-    sub_title: Vec<AnyElement>,
-    children: Vec<AnyElement>,
-}
+// #[derive(IntoElement)]
+// struct StorySection {
+//     base: Div,
+//     title: SharedString,
+//     sub_title: Vec<AnyElement>,
+//     children: Vec<AnyElement>,
+// }
 
-impl StorySection {
-    // pub fn sub_title(mut self, sub_title: impl IntoElement) -> Self {
-    //     self.sub_title.push(sub_title.into_any_element());
-    //     self
-    // }
+// impl StorySection {
+//     // pub fn sub_title(mut self, sub_title: impl IntoElement) -> Self {
+//     //     self.sub_title.push(sub_title.into_any_element());
+//     //     self
+//     // }
 
-    #[allow(unused)]
-    fn max_w_md(mut self) -> Self {
-        self.base = self.base.max_w(rems(48.));
-        self
-    }
+//     #[allow(unused)]
+//     fn max_w_md(mut self) -> Self {
+//         self.base = self.base.max_w(rems(48.));
+//         self
+//     }
 
-    #[allow(unused)]
-    fn max_w_lg(mut self) -> Self {
-        self.base = self.base.max_w(rems(64.));
-        self
-    }
+//     #[allow(unused)]
+//     fn max_w_lg(mut self) -> Self {
+//         self.base = self.base.max_w(rems(64.));
+//         self
+//     }
 
-    #[allow(unused)]
-    fn max_w_xl(mut self) -> Self {
-        self.base = self.base.max_w(rems(80.));
-        self
-    }
+//     #[allow(unused)]
+//     fn max_w_xl(mut self) -> Self {
+//         self.base = self.base.max_w(rems(80.));
+//         self
+//     }
 
-    #[allow(unused)]
-    fn max_w_2xl(mut self) -> Self {
-        self.base = self.base.max_w(rems(96.));
-        self
-    }
-}
+//     #[allow(unused)]
+//     fn max_w_2xl(mut self) -> Self {
+//         self.base = self.base.max_w(rems(96.));
+//         self
+//     }
+// }
 
-impl ParentElement for StorySection {
-    fn extend(&mut self, elements: impl IntoIterator<Item = AnyElement>) {
-        self.children.extend(elements);
-    }
-}
+// impl ParentElement for StorySection {
+//     fn extend(&mut self, elements: impl IntoIterator<Item = AnyElement>) {
+//         self.children.extend(elements);
+//     }
+// }
 
-impl Styled for StorySection {
-    fn style(&mut self) -> &mut gpui::StyleRefinement {
-        self.base.style()
-    }
-}
+// impl Styled for StorySection {
+//     fn style(&mut self) -> &mut gpui::StyleRefinement {
+//         self.base.style()
+//     }
+// }
 
-impl RenderOnce for StorySection {
-    fn render(self, _: &mut Window, cx: &mut App) -> impl IntoElement {
-        GroupBox::new()
-            .id(self.title.clone())
-            .outline()
-            .title(
-                h_flex()
-                    .justify_between()
-                    .w_full()
-                    .gap_4()
-                    .child(self.title)
-                    .children(self.sub_title),
-            )
-            .content_style(
-                StyleRefinement::default()
-                    .rounded(cx.theme().radius_lg)
-                    .overflow_x_hidden()
-                    .items_center()
-                    .justify_center(),
-            )
-            .child(self.base.children(self.children))
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StoryState {
-    pub story_klass: SharedString,
-}
+// impl RenderOnce for StorySection {
+//     fn render(self, _: &mut Window, cx: &mut App) -> impl IntoElement {
+//         GroupBox::new()
+//             .id(self.title.clone())
+//             .outline()
+//             .title(
+//                 h_flex()
+//                     .justify_between()
+//                     .w_full()
+//                     .gap_4()
+//                     .child(self.title)
+//                     .children(self.sub_title),
+//             )
+//             .content_style(
+//                 StyleRefinement::default()
+//                     .rounded(cx.theme().radius_lg)
+//                     .overflow_x_hidden()
+//                     .items_center()
+//                     .justify_center(),
+//             )
+//             .child(self.base.children(self.children))
+//     }
+// }
