@@ -1,0 +1,14 @@
+[package]
+name = "mesh"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+env_logger.workspace = true
+gpui.workspace = true
+gpui-component.workspace = true
+gpui-component-assets.workspace = true
+log.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true

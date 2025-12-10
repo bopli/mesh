@@ -16,6 +16,7 @@ actions!(mesh, [About, Open, Quit, CloseWindow, ToggleSearch,]);
 pub struct AppState {
     // pub invisible_panels: Entity<Vec<SharedString>>,
 }
+
 impl AppState {
     fn init(cx: &mut App) {
         let state = Self {};

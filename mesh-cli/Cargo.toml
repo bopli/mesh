@@ -1,0 +1,10 @@
+[package]
+name = "mesh-cli"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+clap.workspace = true
+env_logger.workspace = true
+mesh-core = { path = "../mesh-core" }
+walkdir.workspace = true

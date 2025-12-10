@@ -37,7 +37,7 @@ pub fn init(cx: &mut App) {
     let json = std::fs::read_to_string(STATE_FILE).unwrap_or(String::default());
     log::info!("Load themes...");
     let state = serde_json::from_str::<State>(&json).unwrap_or_default();
-    if let Err(err) = ThemeRegistry::watch_dir(PathBuf::from("./themes"), cx, move |cx| {
+    if let Err(err) = ThemeRegistry::watch_dir(PathBuf::from("../themes"), cx, move |cx| {
         let theme_dark = SharedString::from(THEME_DARK);
         let theme_light = SharedString::from(THEME_LIGHT);
 
