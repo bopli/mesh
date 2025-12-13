@@ -101,6 +101,8 @@ impl Render for Mesh {
 }
 
 fn main() {
+    env_logger::init_from_env(env_logger::Env::new().filter("MESH_LOG"));
+
     let app = Application::new().with_assets(Assets);
 
     // Parse `cargo run -- <story_name>`

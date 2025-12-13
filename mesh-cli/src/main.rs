@@ -41,5 +41,6 @@ fn collect_files(paths: &Vec<PathBuf>) -> Vec<PathBuf> {
 fn main() {
     let cli = Cli::parse();
     env_logger::init_from_env(env_logger::Env::new().filter("MESH_LOG"));
+
     println!("Hello, world!");
 }

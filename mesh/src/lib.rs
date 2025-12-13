@@ -4,6 +4,7 @@ use gpui::{
     WindowOptions, actions, div, px, size,
 };
 use gpui_component::{Root, TitleBar, v_flex};
+use mesh_core::{MeshCache, MeshConfig};
 
 mod app_menus;
 mod themes;
@@ -13,14 +14,18 @@ pub use crate::title_bar::MeshTitleBar;
 
 actions!(mesh, [About, Open, Quit, CloseWindow, ToggleSearch,]);
 
-pub struct AppState {
-    // pub invisible_panels: Entity<Vec<SharedString>>,
+pub struct MeshState {
+    pub config: MeshConfig,
+    pub cache: MeshCache,
 }
 
-impl AppState {
+impl MeshState {
     fn init(cx: &mut App) {
-        let state = Self {};
-        cx.set_global::<AppState>(state);
+        let state = Self {
+            config: MeshConfig::init(),
+            cache: MeshCache::new(),
+        };
+        cx.set_global::<MeshState>(state);
     }
 
     pub fn global(cx: &App) -> &Self {
@@ -31,7 +36,7 @@ impl AppState {
         cx.global_mut::<Self>()
     }
 }
-impl Global for AppState {}
+impl Global for MeshState {}
 
 pub fn create_new_window<F, E>(
     title: &str,
@@ -125,10 +130,8 @@ impl Render for StoryRoot {
 }
 
 pub fn init(cx: &mut App) {
-    env_logger::init_from_env(env_logger::Env::new().filter("MESH_LOG"));
-
     gpui_component::init(cx);
-    AppState::init(cx);
+    MeshState::init(cx);
     themes::init(cx);
     // stories::init(cx);
 

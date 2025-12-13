@@ -3574,6 +3574,7 @@ dependencies = [
  "gpui-component",
  "gpui-component-assets",
  "log",
+ "mesh-core",
  "serde",
  "serde_json",
 ]

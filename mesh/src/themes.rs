@@ -1,72 +1,50 @@
 use std::path::PathBuf;
 
-use gpui::{App, SharedString};
-use gpui_component::{Theme, ThemeMode, ThemeRegistry};
-use serde::{Deserialize, Serialize};
+use gpui::{Action, App, SharedString};
+use gpui_component::{ActiveTheme, Theme, ThemeMode, ThemeRegistry};
+use mesh_core::MeshConfig;
 
-const STATE_FILE: &str = "mesh_state.json";
-const THEME_DARK: &str = "Ayu Dark";
-const THEME_LIGHT: &str = "Ayu Light";
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct State {
-    theme: SharedString,
-}
-impl State {
-    fn apply_theme(cx: &mut App, theme_name: &SharedString) {
-        if let Some(theme) = ThemeRegistry::global(cx)
-            .themes()
-            .get(&SharedString::from(theme_name))
-            .cloned()
-        {
-            Theme::global_mut(cx).apply_config(&theme);
-        }
-    }
-}
-
-impl Default for State {
-    fn default() -> Self {
-        Self {
-            theme: THEME_LIGHT.into(),
-        }
-    }
-}
+use crate::MeshState;
 
 pub fn init(cx: &mut App) {
-    // Load last theme state
-    let json = std::fs::read_to_string(STATE_FILE).unwrap_or(String::default());
-    log::info!("Load themes...");
-    let state = serde_json::from_str::<State>(&json).unwrap_or_default();
-    if let Err(err) = ThemeRegistry::watch_dir(PathBuf::from("../themes"), cx, move |cx| {
-        let theme_dark = SharedString::from(THEME_DARK);
-        let theme_light = SharedString::from(THEME_LIGHT);
+    let config = &cx.global::<MeshState>().config;
+    let theme_name = SharedString::from(config.current_theme());
 
-        if &state.theme == THEME_LIGHT {
-            State::apply_theme(cx, &theme_dark);
-            State::apply_theme(cx, &theme_light);
-        } else if &state.theme == THEME_DARK {
-            State::apply_theme(cx, &theme_light);
-            State::apply_theme(cx, &theme_dark);
-        } else {
-            log::warn!("No themes Found");
-        }
-    }) {
+    if let Err(err) = ThemeRegistry::watch_dir(
+        PathBuf::from(MeshConfig::themes_dir_path()),
+        cx,
+        move |cx| {
+            if let Some(theme) = ThemeRegistry::global(cx).themes().get(&theme_name).cloned() {
+                Theme::global_mut(cx).apply_config(&theme);
+            }
+        },
+    ) {
         log::error!("Failed to watch themes directory: {}", err);
     }
 
     cx.refresh_windows();
 
     cx.observe_global::<Theme>(|cx| {
-        let state = State {
-            theme: Theme::global(cx).theme_name().clone(),
-        };
+        let theme = cx.theme().theme_name().clone();
+        let config = &cx.global::<MeshState>().config;
 
-        if let Ok(json) = serde_json::to_string_pretty(&state) {
-            // Ignore write errors - if STATE_FILE doesn't exist or can't be written, do nothing
-            let _ = std::fs::write(STATE_FILE, json);
-        }
+        config.change_theme(theme.into());
+        config.save();
     })
     .detach();
+
+    cx.on_action(|switch: &SwitchTheme, cx| {
+        let theme_name = switch.0.clone();
+        if let Some(theme_config) = ThemeRegistry::global(cx).themes().get(&theme_name).cloned() {
+            Theme::global_mut(cx).apply_config(&theme_config);
+        }
+        cx.refresh_windows();
+    });
+    cx.on_action(|switch: &SwitchThemeMode, cx| {
+        let mode = switch.0;
+        Theme::change(mode, None, cx);
+        cx.refresh_windows();
+    });
 }
 
 pub fn switch_theme_mode(cx: &mut App) {
@@ -77,3 +55,11 @@ pub fn switch_theme_mode(cx: &mut App) {
     }
     cx.refresh_windows();
 }
+
+#[derive(Action, Clone, PartialEq)]
+#[action(namespace = themes, no_json)]
+pub(crate) struct SwitchTheme(pub(crate) SharedString);
+
+#[derive(Action, Clone, PartialEq)]
+#[action(namespace = themes, no_json)]
+pub(crate) struct SwitchThemeMode(pub(crate) ThemeMode);
