@@ -12,7 +12,7 @@ const CONFIG_FILE_NAME: &str = "config.toml";
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MeshConfig {
-    album_paths: Vec<PathBuf>,
+    album_dirs: Vec<PathBuf>,
     excluded_dirs: Vec<PathBuf>,
     theme: RefCell<String>,
 }
@@ -28,7 +28,7 @@ impl Default for MeshConfig {
         }
 
         Self {
-            album_paths,
+            album_dirs: album_paths,
             excluded_dirs: Vec::new(),
             theme: RefCell::new("Default Light".to_owned()),
         }
@@ -81,4 +81,22 @@ impl MeshConfig {
     pub fn themes_dir_path() -> PathBuf {
         Self::dir_path().join("themes")
     }
+
+    pub fn album_dirs(&self) -> &Vec<PathBuf> {
+        &self.album_dirs
+    }
+
+    pub fn excluded_dirs(&self) -> &Vec<PathBuf> {
+        &self.excluded_dirs
+    }
+
+    // pub fn add_album_dir(&mut self, path: PathBuf) {
+    //     if !self.album_dirs.iter().any(|p| p == &path) {
+    //         self.album_dirs.push(path);
+    //     }
+    // }
+
+    // pub fn remove_album_dir(&mut self, path: PathBuf) {
+    //     self.album_dirs.retain(|p| p != &path);
+    // }
 }

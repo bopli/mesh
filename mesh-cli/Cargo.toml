@@ -6,5 +6,6 @@ edition.workspace = true
 [dependencies]
 clap.workspace = true
 env_logger.workspace = true
+log.workspace = true
 mesh-core = { path = "../mesh-core" }
 walkdir.workspace = true
