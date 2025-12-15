@@ -17,6 +17,10 @@ impl MeshThumbnail {
         Self { thumbnail_dir_path }
     }
 
+    pub fn thumbnail_dir(&self) -> &PathBuf {
+        &self.thumbnail_dir_path
+    }
+
     /// 尝试从缓存中读取缩略图数据
     pub fn read_thumbnail(&self, file_hash: u128) -> io::Result<Vec<u8>> {
         let full_path = get_file_path(&self.thumbnail_dir_path, &file_hash);

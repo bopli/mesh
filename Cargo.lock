@@ -3583,8 +3583,10 @@ dependencies = [
 name = "mesh-cli"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
  "env_logger",
+ "image",
  "log",
  "mesh-core",
  "walkdir",
